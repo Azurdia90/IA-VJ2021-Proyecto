@@ -1,26 +1,31 @@
 {
-  "name": "proyectoclase",
-  "version": "1.0.0",
-  "description": "Proyecto de Clase IA",
-  "main": "ia.js",
-  "scripts": {
-    "start": "nerve -s build",
-    "heroku-postbuild": "npm run build"
-  },
+  "name": "node-js-getting-started",
+  "version": "0.3.0",
+  "description": "A sample Node.js app using Express 4",
   "engines": {
-    "node": "12.11.1"
+    "node": "14.x"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "ejs": "^3.1.5",
+    "express": "^4.15.2"
+  },
+  "devDependencies": {
+    "got": "^11.3.0",
+    "tape": "^4.7.0"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Azurdia90/IA-VJ2021-201020331.git"
+    "url": "https://github.com/heroku/node-js-getting-started"
   },
   "keywords": [
-    "IA"
+    "node",
+    "heroku",
+    "express"
   ],
-  "author": "Cristian Azurdia",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Azurdia90/IA-VJ2021-201020331/issues"
-  },
-  "homepage": "https://github.com/Azurdia90/IA-VJ2021-201020331#readme"
+  "license": "MIT"
 }
