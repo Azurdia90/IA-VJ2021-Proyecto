@@ -4,7 +4,10 @@
   "description": "Proyecto de Clase IA",
   "main": "ia.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ia.js"
+  },
+  "engines": {
+    "node": "12.11.1"
   },
   "repository": {
     "type": "git",
