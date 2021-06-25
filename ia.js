@@ -1,19 +1,13 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const app = express();
-
+const http = require('http');
 const port = process.env.PORT || 3000;
 
+
+const requestListener = function (req, res) {
+  res.writeHead(200);
+  res.end('Hello, World!');
+}
+
+const server = http.createServer(requestListener);
+server.listen(port);
+
 // for parsing json
-app.use(
-  bodyParser.json({
-    limit: "20mb",
-  })
-);
-// parse application/x-www-form-urlencoded
-app.use(
-  bodyParser.urlencoded({
-    extended: false,
-    limit: "20mb",
-  })
-);
