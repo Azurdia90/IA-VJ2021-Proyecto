@@ -20,6 +20,8 @@ var matrix_reversis = [
         [56,57,58,59,60,61,62,63]
        ];
 
+const port = Process.env.PORT || 3000 ;
+
 var http = require('http'); 
 var express = require('express')
 var app = express();
@@ -55,5 +57,5 @@ res.end(html);
 
 });
 
-server.listen(5000);
+server.listen(port);
 console.log('Node.js web server at port 5000 is running..')
