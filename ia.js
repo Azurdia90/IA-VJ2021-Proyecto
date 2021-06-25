@@ -26,6 +26,10 @@ var http = require('http');
 var express = require('express')
 var app = express();
 
+var html = buildHtml();
+
+console.log(html);
+
 var server = http.createServer(function (req, res) {   
 
 var url = req.url;
