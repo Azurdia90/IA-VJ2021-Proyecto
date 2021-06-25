@@ -1,0 +1,22 @@
+{
+  "name": "proyectoclase",
+  "version": "1.0.0",
+  "description": "Proyecto de Clase IA",
+  "main": "ia.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Azurdia90/IA-VJ2021-201020331.git"
+  },
+  "keywords": [
+    "IA"
+  ],
+  "author": "Cristian Azurdia",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Azurdia90/IA-VJ2021-201020331/issues"
+  },
+  "homepage": "https://github.com/Azurdia90/IA-VJ2021-201020331#readme"
+}
