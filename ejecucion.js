@@ -1,4 +1,4 @@
-exports.minimax = function mini_max  (s, t){
+exports.minimax = function mini_max(s, t){
     status = s;
     var vector = []
     for (let index = 0; index < 64; index++) {

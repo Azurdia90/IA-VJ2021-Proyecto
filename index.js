@@ -1,5 +1,5 @@
-const minimax = require("./ejecucion")
 var http = require('http'); // 1 - Import Node.js core module
+const minimax = require("./ejecucion")
 const express = require('express')
 const app = express()
 
