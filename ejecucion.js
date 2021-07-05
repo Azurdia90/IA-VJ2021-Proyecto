@@ -1,295 +1,380 @@
-var jugadores=["NEGRAS","BLANCAS"];
-
-var jugador;
-var oponente;
-
-var heuristica = [[120,-20,20,5,5,20,-20,120],
-[-20,-40,-5,-5,-5,-5,-40,-20],
-[20,-5,15,3,3,15,-5,20],
-[5,-5,3,3,3,3,-5,5],
-[5,-5,3,3,3,3,-5,5],
-[20,-5,15,3,3,15,-5,20],
-[-20,-40,-5,-5,-5,-5,-40,-20],
-[120,-20,20,5,5,20,-20,120]];
-
-
-function Max(estado, turno, xAnt, yAnt, probabilidad){
-    var MejorVal = -10000;
-
-    if(turno == 1){
-        otroTurno = 0
+function mini_max(s, t){
+    status = s;
+    var vector = []
+    for (let index = 0; index < 64; index++) {
+        vector.push([status[index],index]);
     }
-    else{
-        otroTurno = 1
+   
+    moves = getSuccessorMoves(t,vector);
+    return selectBetter(moves[0]);
+    // respuesta = algoritmo(vector,t,0,[]);
+    // console.log("respuesta:")
+    // console.log(respuesta);
+    // return respuesta[1][0];
+
+}
+
+
+function indiceColumna(indice){
+    col = Math.trunc(indice/8);
+    fil = (indice%8);
+    console.log("c: "+col+" ,f:"+fil);
+    res = ""+col+""+fil;
+    return res;
+}
+
+function selectBetter(moves){
+    var better=[];
+    var indice = 0;
+
+    for (let index = 0; index < moves.length; index++) {
+
+      if (moves[index].length > better.length){
+          better = moves[index].length;
+          indice = index;
+      }
     }
 
-    if (probabilidad <= 0){
-        return heuristica[xAnt][yAnt];
+    //console.log("indice: "+indice);
+
+    col = Math.trunc(indice/8);
+    fil = (indice%8);
+    console.log("f,c"+fil+","+col);
+
+    res = ""+col+""+fil;
+    //return res;
+    return indice;
+}
+
+
+function algoritmo(tablero,turno,nivel,movimiento){
+    console.log("===========================================================entrando a algoritmo con nivel:"+ nivel);
+   // print_my(tablero);
+    console.log("heredado es");
+    console.log(movimiento);
+    console.log("===================================================================================================");
+    peso = [99,-8,8,6,6,8,-8,99,-8,-24,-4,-3,-3,-4,-24,-8,8,-4,7,4,4,7,-4,8,6,-3,4,0,0,4,-3,6,6,-3,4,0,0,4,-3,6,8,-4,7,4,4,7,-4,8,-8,-24,-4,-3,-3,-4,-24,-8,99,-8,8,6,6,8,-8,99]
+    peso_propio =0;
+    ocupa_propio=0;
+
+    peso_enemigo = 0;
+    ocupa_enemigo=0;
+    espacios_vacios = 0;
+
+    cant_comidas =0
+
+    for (let index = 0; index < tablero.length; index++) {
+       if (tablero[index][0] == turno){peso_propio += peso[index]; ocupa_propio++;}
+       else if (tablero[index][0] == 2){espacios_vacios++;}
+       else {peso_enemigo += peso[index];ocupa_enemigo++;}
+    }
+    
+  
+    pp = (peso_propio-216)*100/784;
+    pe = (peso_enemigo-216)*100/784;
+    var r_pesos = pp/pe;
+
+    op = (ocupa_propio*100/64);
+    oe = (ocupa_enemigo*100/64);
+    var r_ocupa = op/oe;
+
+    // console.log("HEURISTIC DATA");
+    // console.log("peso propio "+peso_propio);
+    // console.log("peso enemig "+peso_enemigo);
+    // console.log("ocup propio "+ocupa_enemigo);
+    // console.log("ocup enemig "+ocupa_enemigo);
+    // console.log("sin ocupar  "+espacios_vacios);
+    // console.log("HEURISTIC DATA2");
+    // console.log(pp);
+    // console.log(pe);
+    // console.log(op);
+    // console.log(oe);
+    // console.log("RELACIONES");
+    // console.log("rel pesos %"+r_pesos);
+    // console.log("rel ocupa %"+r_ocupa);
+
+    //Version 1 
+    var mih = r_pesos + r_ocupa ;
+   // console.log("mi heuristica "+mih);
+  
+    valores = [];
+    max=-90000;
+    min=90000;
+    max_mov =[];
+    min_mov = [];
+
+    movesarray = getSuccessorMoves(turno,tablero);
+    moves = movesarray[1];
+
+    if (nivel == 2){
+        console.log("la heuristica es "+ mih);
+        return [mih,movimiento];
+    }
+    if (moves.length ==0){
+        console.log("la heuristica es "+ mih);
+        return [mih,movimiento];
+    }
+
+    //movesarray = getSuccessorMoves(turno,tablero);
+    //moves = movesarray[1];
+
+
+    var selected_move_index =0; 
+    var mov_heredado=[];
+    if (nivel==0){
+        mov_heredado = moves[x];
     }
     else {
-        var posiblesMovimientos = getMovimientosValidos(estado, turno);
-        posiblesMovimientos = posiblesMovimientos.sort(() => Math.random() - 0.5);
+        mov_heredado = movimiento}
 
-        for (let [d1, d2] of posiblesMovimientos) {
-            var copiaEstado = obtenerVlaEstado(estado);
-            hacerMovimiento(copiaEstado, turno, d1, d2);
-            var valor = Min(copiaEstado, otroTurno, d1, d2, probabilidad-1);
-            if(valor > MejorVal){
-                MejorVal = valor
-            }
-        }
-        return MejorVal;
-    }
-}
-
-function Min(estado, turno, xAnt, yAnt, probabilidad){
-    var peor = 100000;
-
-    var otroTurno=0;
-    if(turno == 1){
-        otroTurno = 0;
-    }
-    else{
-        otroTurno = 1;
+    for (let x = 0; x < moves.length; x++) {
+        tableronuevo = Mover(tablero,moves[x],turno);
+        res = algoritmo(tableronuevo,next(turno),nivel+1,mov_heredado); 
+        if (res[0]>max) {max_mov = res; max = res[0];selected_move_index = x};
+        //if (res[0]<min) {min_mov = res; min = valores[0]};
     }
 
-    if (probabilidad <= 0){
-        return heuristica[xAnt][yAnt];
+    // if (nivel%2 ==0){
+    //     console.log("elegido maximo"+max_mov[1]);
+    //     return max_mov;
+    // }
+    // else{
+    //     console.log("elegido minimo"+min_mov[1]);
+    //     return min_mov;
+    // }
+
+    console.log("----------------------------------------------elegido maximo"+max_mov);
+    
+
+    if (nivel==0){
+        return [max, moves[selected_move_index]];
+    }else{
+        return [max,movimiento];
     }
-    else{
-        var posiblesMovimientos = getMovimientosValidos(estado, turno);
-        posiblesMovimientos = posiblesMovimientos.sort(() => Math.random() - 0.5);
-
-        for (let [d1, d2] of posiblesMovimientos) {
-            var copiaEstado = obtenerVlaEstado(estado);
-            hacerMovimiento(copiaEstado, turno, d1, d2);
-            var valor = Max(copiaEstado, otroTurno, d1, d2, probabilidad-1);
-            if(valor < peor){
-                peor = valor;
-            }
-        }
-        return peor
-    }
-}
-
-function getMovMinMax(estado, turno){
-
-    var otroNuevoTurno=0;
-    var posiblesMovimientos = getMovValido(estado, turno);
-    posiblesMovimientos = posiblesMovimientos.sort(() => Math.random() - 0.5);
-
-    for (let [d1, d2] of posiblesMovimientos) {
-        if (esquina(d1,d2)){
-        return String(d2)+""+String(d1)
-        }
-    }
-            
-    if(turno == 1){
-        otroNuevoTurno = 0;
-    }
-    else{
-        otroNuevoTurno = 1;
-    }
-
-    var mejorValor = -99999;
-    var mejorValor2 = -1;
-    var mejorMovimiento = -1;
-
-    for (let [d1, d2] of posiblesMovimientos) {
-        var copiaEstado = getCopiaEstado(estado);
-        crearMov(copiaEstado, turno, x, y);
-        var valor = minimo(copiaEstado, otroNuevoTurno, x, y, 3);
-        var valor2 = getValorEstado(estado, turno);
-        if((valor > mejorValor) || (valor == mejorValor && valor2 > mejorValor2)){
-            mejorMovimiento = String(y)+""+String(x);
-            mejorValor = valor;
-            mejorValor2 = valor2;
-        }
-    }
-
-    return mejorMovimiento;
-}
-
-function getMovimiento(estado, turno) {
-
-    var posiblesMovimientos = getMovimientosValidos(estado, turno);
-    posiblesMovimientos = posiblesMovimientos.sort(() => Math.random() - 0.5);
-
-    for (let [d1, d2] of posiblesMovimientos) {
-        if (corner(d1, d2)){
-            return (String(d2) + "" + String(d1));
-        }
-    }
-
-    var MejorVal = -10000
-    var Mejor = -1
-
-    for (let [d1, d2] of posiblesMovimientos) {
-        var copiaEstado = obtenerVlaEstado(estado);
-        hacerMovimiento(copiaEstado, turno, d1, d2);
-        var valor = heuristica[d1][d2];
-        if(valor > MejorVal){
-            Mejor = String(d2)+""+String(d1);
-            MejorVal = valor;
-        }
-    }
-        
-    return Mejor;
-}
-
-function corner(x, y) {
-    return (x == 0 && y == 0) || (x == 7 && y == 0) || (x == 0 && y == 7) || (x == 7 && y == 7);
-}
-
-function hacerMovimiento(estado, turno, xMov, yMov) {
-    var movimientoCambiar = movValidos(estado, turno, xMov, yMov);
-
-    if (movimientoCambiar == false) {
-        return false;
-    }
-    estado[xMov][yMov] = turno;
-    for (let [d1, d2] of movimientoCambiar) {
-        estado[d1][d2] = turno;
-    }
-    return true;
+    
+    // console.log("elegido maximo: "+max_mov[0]);
+    // return max_mov;
+    
 }
 
 
-function obtenerVlaEstado(estado) {
-    var copiaEstado = getNuevoEstado();
+function next(turno){
+    return Math.abs(turno-1).toString();
+}
 
+function Mover(est,movimiento, turno){
+    console.log(">>>moviendo con turno "+turno);
+    console.log(movimiento);
+    console.log(">>>en estado: ");
+    print_my(est);
+    estado = [...est]
+    estado[movimiento[0]]=[turno,movimiento[0]];
+    for (let index = 0; index < movimiento[1].length; index++) {
+        estado[movimiento[1][index]]=[turno,movimiento[1][index]];
+    }
+    print_my(estado);
+    return estado;
+}
+
+function print_my(estado){
+    var contador =0;
+    let a = "";
+    for (let j = 0; j < 64; j++) {
+         a = a+" [";
+         if(estado[j][1]<10){a=a+0;}
+         a=a+estado[j][1]+": "+estado[j][0]+"]";
+        contador++;
+        if (contador>7){
+            contador =0;
+            a=a+"\n";
+        }
+
+    }
+    console.log(a);
+}
+function getSuccessorMoves(t, vector){
+    var movimientos =[];
+    var moves =[];
+    for (let index = 0; index < 64; index++) {
+       moves[index] = [];        
+    }
+    //console.log(moves);
+    //VERTICALES Y HORIZONTALES
     for (var x = 0; x < 8; x++) {
-        for (var y = 0; y < 8; y++) {
-            copiaEstado[x][y] = estado[x][y];
-        }
+        v = getVertical(x,vector);
+        h = getHorizontal(x,vector);
+        //console.log(v);
+        //console.log(h);
+        var mv= getMoves(v,t);
+        var mh= getMoves(h,t);
+        //console.log(mv);
+        //console.log(mh);
+        movimientos = movimientos.concat(mv);
+        movimientos = movimientos.concat(mh);
+
     }
-    return copiaEstado;
+    //DIAGONALES
+    for(let y=0; y<6; y++){
+        var asc = 56+y; 
+        var desc = y;
+        da1 = getDiagonal(asc,vector,true);
+        dd1 = getDiagonal(desc,vector,false);
+        movimientos = movimientos.concat(getMoves(da1,t));
+        movimientos = movimientos.concat(getMoves(dd1,t));
+     
+    }
+    for(let y=2; y<7; y++){
+        var asc = y; 
+        var desc =(7-y)*8;
+        da2 = getDiagonal(asc,vector,true);
+        dd2 = getDiagonal(desc,vector,false);
+        movimientos = movimientos.concat(getMoves(da2,t));
+        movimientos = movimientos.concat(getMoves(dd2,t));
+    }
+
+    
+   for (let index = 0; index < movimientos.length; index++) {
+       mov = movimientos[index];
+       moves[mov[0]]= moves[mov[0]].concat(mov[1]);
+   }
+
+   var movimientos_no_rep=[];
+   for (let index = 0; index < moves.length; index++) {
+    if (moves[index].length!=0){
+        movimientos_no_rep.push([index,moves[index]]);
+    }
+   }
+
+//    console.log("-----movimientos: ")
+//    console.log(movimientos);
+//    console.log("-----moves: ")
+//    console.log(moves);
+//    console.log("-----movimientos sin repetidos (fusionados): ")
+//    console.log(movimientos_no_rep);
+   //return [moves,movimientos];
+   return [moves,movimientos_no_rep];
+
 }
 
-
-function getValEstado(estado, turno) {
-    var valor = 0;
-
-    for (var x = 0; x < 8; x++) {
-        for (var y = 0; y < 8; y++) {
-            if (estado[x][y] == turno) {
-                valor += 1;
-            }
-        }
+function getVertical(i,vector){
+    resultado = [];
+    for (let index = i; index < 64; index+=8) {
+       resultado.push(vector[index])
     }
-    return valor;
+    //console.log("vertical "+i );
+    //console.log(resultado);
+    return resultado;
 }
 
-function getMovimientosValidos(estado, turno) {
-    var movimientos = [];
-
-    for (var x = 0; x < 8; x++) {
-        for (var y = 0; y < 8; y++) {
-            if (movValidos(estado, turno, x, y) != false) {
-                movimientos.push([x, y]);
-            }
-        }
+function getHorizontal(j,vector){
+    resultado = [];
+    for (let index = 0; index <8; index++) {
+       resultado.push(vector[j*8+index])
     }
-    return movimientos;
-
+    //console.log("horizontal "+j );
+    //console.log(resultado);
+    return resultado;
 }
 
+function getDiagonal(k,vector,asc){
+   
+    if (asc){
+        ls=64;
+        factor = -7;
+        if(k>=56){
+            li= 8*k-442;
+        }else{
 
-function movValidos(estado, turno, xMov, yMov) {
-    var otroTurno=0;
-    if (estado[xMov][yMov] != 2 || !estaEnTablero(xMov, yMov)) {
-        return false;
-    }
-
-    estado[xMov][yMov] = turno;
-
-    if (turno == 1) {
-        otroTurno = 0;
+            li = 5/8-1;
+        }
     }
     else {
-        otroTurno = 1;
-    }
-
-    var movimientoCambiar = []
-
-    var nuevin = [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]];
-
-    for (var iti = 0; iti < 8; iti++) {
-        var xdir = nuevin[iti][0];
-        var ydir = nuevin[iti][1];
-        var x = xMov;
-        var y = yMov;
-
-        x += xdir;
-        y += ydir;
-
-        if (estaEnTablero(x, y) && (estado[x][y] == otroTurno)) {
-            x += xdir;
-            y += ydir;
-
-            if (!estaEnTablero(x, y)) {
-                continue;
-            }
-            while (estado[x][y] == otroTurno) {
-                x += xdir;
-                y += ydir;
-                if (!estaEnTablero(x, y)) {
-                    break;
-                }
-
-
-            }
-            if (!estaEnTablero(x, y)) {
-                continue;
-            }
-            if (estado[x][y] == turno) {
-                while (true) {
-                    x -= xdir;
-                    y -= ydir;
-                    if ((x == xMov) && (y == yMov)) {
-                        break;
-                    }
-                    movimientoCambiar.push([x, y]);
-                }
-            }
-
-        }
-
-    }
-    estado[xMov][yMov] = 2;
-    if (movimientoCambiar.length == 0) {
-        return false
-    }
-    return movimientoCambiar;
-}
-
-function estaEnTablero(x, y) {
-    return x >= 0 && x <= 7 && y >= 0 && y <= 7
-}
-
-function getEstado(estado) {
-    var aarray = [];
-    for (var i = 0; i < estado.length; i++) {
-        aarray.push(Number(estado.charAt(i)));
-    }
-    var nuevoestado = [];
-    nuevoestado = getNuevoEstado();
-    var x = 0;
-    var y = 0;
-    for (var j in aarray) {
-        nuevoestado[x][y] = aarray[j];
-        x += 1;
-        if (x == 8) {
-            x = 0;
-            y += 1;
+        factor=9;
+        li=-1;
+        if(k<7){
+            ls= 7*(9-k)+1;
+        }else{
+            ls= 63-(k/8)+1;
         }
     }
-    return nuevoestado;
+    resultado = [];
+    for (let index = k; index >li && index <ls; index+=factor) {
+        //console.log("hi");
+        resultado.push(vector[index]);
+    }
+    //console.log("diagonal "+k + "ascendente: "+asc);
+    //console.log(resultado);
+     return resultado;
 }
 
 
-exports.principal = function inicio(estado, turno){
-            var destado = getEstado(estado)
-            var respuesta = obtenerMov(destado, turno)           
-            return respuesta
+function getMoves(vector, turno){
+    // console.log("evaluando vector:")
+    // console.log(vector);
+    propia = false;
+    vacia = false;
+    var temp;
+    var move_p = [];
+    var list_p = [];
+    var move_v =[];
+    var list_v =[];
+    var res=[];
+    //console.log(turno);
+    for (let pos = 0; pos < vector.length; pos++) {
+
+        //console.log("inicia iteracion ---"+pos);
+       if (vector[pos][0] == 2){  //ENCONTRANDO UNA VACÍA
+            //console.log("vacia");
+            vacia = true;
+            temp = vector[pos][1];
+            if (propia && list_p.length!=0){
+                var new_move = [temp,[...list_p]]
+                move_p.push(new_move);
+                //console.log("se pusheo: "+vector[pos][1] +" que voltea a "+ list_p );
+                list_p = [];
+                //console.log(list_p);
+            }
+            if(vacia){
+                list_v=[];
+            }
+            propia = false; 
+        }
+       else if (vector[pos][0] == turno){ // ENCONTRANDO UNA PROPIA
+        //console.log("propia");
+           propia = true
+           if(vacia && list_v.length !=0){
+                var new_move = [temp,[...list_v]]
+                move_v.push(new_move);
+                //console.log("se pusheo: "+temp +" que voltea a "+ list_v );
+                list_v = [];
+           }
+           if(propia){
+               list_p=[];
+           }
+           vacia = false;
+        }
+        else{                       //ENCONTRANDO UNA ENEMIGA
+            //console.log("enemiga");
+            if(propia){
+                list_p.push(vector[pos][1]);
+                //console.log("se voltearía: "+vector[pos][1] );
+                //console.log(list_p);
+
+            }
+            if(vacia){
+                list_v.push(vector[pos][1]);
+                //console.log("se voltearía: "+vector[pos][1] );
+                //console.log(list_v);
+            }
+        }
+     
+      
+    }
+
+    res = move_p.concat(move_v);
+    //console.log("resultado :");
+    //console.log(res);
+    //console.log("termina iteracion ---------"+pos);
+    return res;
+
 }
