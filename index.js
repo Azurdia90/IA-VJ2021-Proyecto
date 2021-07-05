@@ -1,10 +1,15 @@
-const express = require('express')
-const path = require('path')
-const PORT = process.env.PORT || 5000
+const principal = require("./ejecucion.js");
+const express = require("express");
+const app = express();
 
-express()
-  .use(express.static(path.join(__dirname, 'public')))
-  .set('views', path.join(__dirname, 'views'))
-  .set('view engine', 'ejs')
-  .get('/', (req, res) => res.render('pages/index'))
-  .listen(PORT, () => console.log(`Listening on ${ PORT }`))
+const port = process.env.PORT || 3000
+
+app.get('/minmax', function (req, res) {
+    console.log("Inicio-Reversi")
+    console.log(req.query)
+    res.send(principal.principal(req.query.estado,req.query.turno));
+});
+
+app.listen(port, () => {
+	console.log("Started in Port: ", port);
+});
