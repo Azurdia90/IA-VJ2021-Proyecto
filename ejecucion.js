@@ -377,5 +377,3 @@ function getMoves(vector, turno){
     return res;
 
 }
-
-module.exports.ejecucion = ejecucion;
