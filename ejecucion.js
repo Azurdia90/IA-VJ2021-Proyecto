@@ -1,4 +1,4 @@
-ejecucion.mini_max = function (s, t){
+exports.ejecucion = function mini_max  (s, t){
     status = s;
     var vector = []
     for (let index = 0; index < 64; index++) {
@@ -14,7 +14,7 @@ ejecucion.mini_max = function (s, t){
 
 }
 
-ejecucion.indiceColumna = function(indice){
+exports.ejecucion = function indiceColumna(indice){
     col = Math.trunc(indice/8);
     fil = (indice%8);
     console.log("c: "+col+" ,f:"+fil);
