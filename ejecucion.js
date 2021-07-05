@@ -8,7 +8,7 @@ function inicio(s, t){
     }
    
     moves = getSuccessorMoves(t,vector);
-    return selectBetter(moves[0]);
+    return selectBetterMove(moves[0]);
 }
 
 /** FUNCION PARA OBTENER LA POSICION DE LA COLUMNA Y FILA EN LA QUE SE INSERTARA LA FICHA **/
@@ -20,7 +20,8 @@ function indiceColumna(indice){
     return _return;
 }
 
-function selectBetter(moves){
+/** SELECCIONAR MEJOR MOTIVIMIENTO **/
+function selectBetterMove(moves){
     var better=[];
     var indice = 0;
 
@@ -43,39 +44,6 @@ function selectBetter(moves){
     return indice;
 }
 
-function next(turno){
-    return Math.abs(turno-1).toString();
-}
-
-function Mover(est,movimiento, turno){
-    console.log(">>>moviendo con turno "+turno);
-    console.log(movimiento);
-    console.log(">>>en estado: ");
-    print_my(est);
-    estado = [...est]
-    estado[movimiento[0]]=[turno,movimiento[0]];
-    for (let index = 0; index < movimiento[1].length; index++) {
-        estado[movimiento[1][index]]=[turno,movimiento[1][index]];
-    }
-    print_my(estado);
-    return estado;
-}
-
-function print_my(estado){
-    var contador =0;
-    let a = "";
-    for (let j = 0; j < 64; j++) {
-        a = a+" [";
-        if(estado[j][1]<10){a=a+0;}
-        a=a+estado[j][1]+": "+estado[j][0]+"]";
-        contador++;
-        if (contador>7){
-            contador =0;
-            a=a+"\n";
-        }
-
-    }
-}
 function getSuccessorMoves(t, vector){
     var movimientos =[];
     var moves =[];
