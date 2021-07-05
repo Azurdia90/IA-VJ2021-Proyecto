@@ -5,7 +5,7 @@ const app = express()
 
 app.get('/reversi201020331', (req, res) => {
    
-    var indice = minimax.mini_max(req.query.estado, req.query.turno);
+    var indice = minimax.inicio(req.query.estado, req.query.turno);
     var r = minimax.indiceColumna(indice);
     console.log("vamos a jugar en la posición: "+r);
     res.send(String(r));
