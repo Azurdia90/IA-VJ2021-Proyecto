@@ -1,4 +1,4 @@
-const principal = require("ejecucion.js");
+const principal = require("./ejecucion.js");
 const express = require("express");
 const app = express();
 
