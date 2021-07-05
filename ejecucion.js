@@ -378,5 +378,5 @@ function getMoves(vector, turno){
 
 }
 
-exports.mini_max;
-exports.inidiceColumna;
+exports.mini_max = mini_max;
+exports.indiceColumna = indiceColumna;
