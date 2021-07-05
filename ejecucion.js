@@ -1,4 +1,4 @@
-function mini_max(s, t){
+ejecucion.mini_max = function (s, t){
     status = s;
     var vector = []
     for (let index = 0; index < 64; index++) {
@@ -14,8 +14,7 @@ function mini_max(s, t){
 
 }
 
-
-function indiceColumna(indice){
+ejecucion.indiceColumna = function(indice){
     col = Math.trunc(indice/8);
     fil = (indice%8);
     console.log("c: "+col+" ,f:"+fil);
@@ -378,3 +377,5 @@ function getMoves(vector, turno){
     return res;
 
 }
+
+module.exports.ejecucion = ejecucion;
